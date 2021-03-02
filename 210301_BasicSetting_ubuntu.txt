@@ -33,5 +33,3 @@ sudo apt-get install vim
 sudo apt install qemu-system-arm
 sudo apt install gcc-arm-none-eabi
 sudo apt-get install gdb-multiarch
-
-
