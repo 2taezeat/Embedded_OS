@@ -1,0 +1,49 @@
+## 임베디드 OS , ch3_source
+
+.text
+	.code 32
+
+	.global vector_start
+	.global vector_end
+
+	vector_start:
+		MOV		R0, R1
+	vector_end:
+		.space 1024, 0
+.end
+
+
+------------
+vi navilos.ld
+
+ENTRY(vector_start)
+SECTIONS
+{
+	. = 0x0;
+
+
+	.text :
+	{
+		*(vector_start)
+		*(.text .rodata)
+	}
+	.data :
+	{
+		*(.data)
+	}
+	.bss :
+	{
+		*(.bss)
+	}
+} 
+-----------
+
+arm-none-eabi-as -march=armv7-a -mcpu=cortex-a8 -o Entry.o ./Entry.S
+
+arm-none-eabi-objcopy -O binary Entry.o Entry.bin
+
+arm-none-eabi-ld -n -T ./navilos.ld -nostdlib -o navilos.axf boot/Entry.o
+
+arm-none-eabi-objdump -D navilos.axf
+
+qemu-system-arm -M realview-pb-a8 -kernel navilos.axf -S -gdb tcp::1234,ipv4
